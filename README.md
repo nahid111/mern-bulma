@@ -1,6 +1,6 @@
-# mern-shop
+# mern-bulma
 <p>
-MERN stack Boilerplate
+MERN stack + Bulma CSS Boilerplate
 </p>
 
 ## installation
