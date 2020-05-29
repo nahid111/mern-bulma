@@ -4,7 +4,7 @@ const colors = require('colors');
 const dotenv = require('dotenv');
 
 // Load environment variables
-dotenv.config({ path: './.env' });
+dotenv.config({ path: __dirname+'/../../.env' });
 
 /**
  * Load models

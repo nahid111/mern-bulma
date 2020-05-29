@@ -2,29 +2,21 @@ import React, { Fragment, useState } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { login } from '../store/actions/auth';
 
+const ForgotPassword = ({ isAuthenticated }) => {
 
-const Login = ({isAuthenticated, login}) => {
+    const [email, setEmail] = useState('');
 
-    // component state
-    const [formData, setFormData] = useState({ email: '', password: '' });
-
-    // on change handler 
-    const onChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    }
+    const onChange = e => setEmail(e.target.value);
 
     const onSubmit = (e) => {
         e.preventDefault();
-        login(formData.email, formData.password);
+        // forgotPassword(email);
     }
-
-
+    
     if (isAuthenticated) {
-        return <Redirect to='/dashboard' />
+        return <Redirect to='/' />
     }
-
 
     return (
       <Fragment>
@@ -33,12 +25,12 @@ const Login = ({isAuthenticated, login}) => {
             <div className="block">
               <div className="columns">
                 <div className="column is-6 is-offset-3">
-                  <h1 className="title has-text-link">Sign In</h1>
+                  <h1 className="title has-text-primary">Reset Password</h1>
                   <p className="subtitle">
                     <span className="icon">
-                      <i className="fas fa-user"></i>
+                      <i className="fas fa-key"></i>
                     </span>
-                    <span>Sign Into Your Account</span>
+                    <span>Submit your email to reset the password</span>
                   </p>
                   <hr />
 
@@ -50,21 +42,7 @@ const Login = ({isAuthenticated, login}) => {
                           className="input"
                           type="text"
                           name="email"
-                          value={formData.email}
-                          onChange={(e) => onChange(e)}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="field">
-                      <label className="label">Password</label>
-                      <div className="control">
-                        <input
-                          className="input"
-                          type="password"
-                          name="password"
-                          minLength="6"
-                          value={formData.password}
+                          value={email}
                           onChange={(e) => onChange(e)}
                         />
                       </div>
@@ -72,7 +50,7 @@ const Login = ({isAuthenticated, login}) => {
 
                     <div className="field">
                       <div className="control">
-                        <button className="button is-link">Login</button>
+                        <button className="button is-primary">Submit</button>
                       </div>
                     </div>
                   </form>
@@ -83,27 +61,24 @@ const Login = ({isAuthenticated, login}) => {
           </div>
 
           <div className="block has-text-centered">
-            Don't have an account?{" "}
-            <Link to="/register" className="has-text-danger">
-              Sign Up
-            </Link>
+            <p>
+              Don't have an account? <Link to="/register" className="has-text-danger">Sign Up</Link>
+            </p>
+            <p>
+              Already have an account? <Link to="/login">Sign in</Link>
+            </p>
           </div>
         </section>
       </Fragment>
     );
 }
 
-
-Login.propTypes = {
-    login: PropTypes.func.isRequired,
-    isAuthenticated: PropTypes.bool
+ForgotPassword.propTypes = {
+    isAuthenticated: PropTypes.bool.isRequired,
 }
 
 const mapStateToProps = state => ({
     isAuthenticated: state.auth.isAuthenticated
 });
 
-
-export default connect(mapStateToProps, { login })(Login);
-
-
+export default connect(mapStateToProps)(ForgotPassword);
