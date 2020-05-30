@@ -103,15 +103,31 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
   // update user to save the tokens
   await user.save({ validateBeforeSave: false });
 
-  // Create reset url like http://devcamper.io/api/v1/auth/resetpassword/:resettoken
+  // Create reset url for api like http://devcamper.io/api/v1/auth/resetpassword/:resettoken
+  // Create reset url for Frontend like http://localhost:3000/reset-password/:token
+
+  /*
   // req.protocol returns http or https
   // req.get('host') returns the domain name
   const resetUrl = `${req.protocol}://${req.get("host")}/api/v1/auth/resetpassword/${resetToken}`;
   const message = `You are receiving this email because you (or someone else) have requested to reset a password. Please make a PUT request to: \n\n ${resetUrl}`;
+  */
+
+  const resetUrl = `http://localhost:3000/reset-password/${resetToken}`;
+  const message = `
+  <div style="text-align: center; padding: 20px; line-height: 2; font-size: 1.2rem">
+    You are receiving this email because you (or someone else) have requested to reset a password. <br />
+    Visit the following link to reset your password <br /><br />
+    <a href="${resetUrl}"
+      style="background-color: #4CAF50; border: none; color: white; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 1rem; font-weight: bold">
+      RESET PASSWORD
+    </a>
+  </div>
+  `;
 
   // send email with password reset token
   try {
-    await sendEmail({ email: user.email, subject: "Blog Reset Password", message });
+    await sendEmail({ email: user.email, subject: "mern-app Reset Password", message });
     res.status(200).json({ success: true, data: "Reset Password Email sent" });
   }
   catch (err) {

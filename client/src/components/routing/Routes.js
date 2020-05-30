@@ -10,6 +10,7 @@ import Register from '../auth/Register';
 import Alert from '../Alert';
 import Profile from '../Profile.jsx';
 import ForgotPassword from '../auth/ForgotPassword.jsx';
+import ResetPassword from '../auth/ResetPassword.jsx';
 
 
 const Routes = props => {
@@ -21,6 +22,7 @@ const Routes = props => {
         <Route exact path="/register" component={Register} />
         <Route exact path="/login" component={Login} />
         <Route exact path="/forgot-password" component={ForgotPassword} />
+        <Route exact path="/reset-password/:token" component={ResetPassword} />
         <PrivateRoute exact path="/profile" component={Profile} />
         <PrivateRoute exact path="/dashboard" component={Dashboard} />
         <Route component={NotFound} />

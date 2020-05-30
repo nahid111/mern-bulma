@@ -105,4 +105,53 @@ export const updateUser = (name, email, avatar) => async (dispatch) => {
 };
 
 
+//======================================================================
+//                         Forgot Password
+//======================================================================
+export const forgotPassword = (email) => async (dispatch) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  const body = JSON.stringify({email});
+
+  try {
+    await axios.post("/api/v1/auth/forgotpassword", body, config);
+    dispatch(
+      setAlert(
+        `An Email will be sent to this email address containing a link to reset the password. Please Visit your email and follow the link for the next steps.`,
+        "success",
+        60000
+      )
+    );
+
+  } catch (err) {
+    dispatch(setAlert(err.response.data.error, "danger"));
+  }
+};
+
+//======================================================================
+//                         Reset Password
+//======================================================================
+export const resetPassword = (token, password) => async (dispatch) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  const body = JSON.stringify({password});
+
+  try {
+    await axios.put("/api/v1/auth/resetpassword/"+token, body, config);
+    dispatch(setAlert("Password Reset Successful", "success", 60000));
+
+  } catch (err) {
+    dispatch(setAlert(err.response.data.error, "danger"));
+  }
+};
+
+
 
