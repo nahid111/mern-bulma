@@ -3,6 +3,12 @@
 MERN stack + Bulma CSS Boilerplate
 </p>
 
+## Features
+- Token Based Auth
+- Verify Email
+- Forgot/Reset Password
+- image Upload
+
 ## installation
 - install NodeJs & npm
 - install MongoDB
@@ -10,14 +16,15 @@ MERN stack + Bulma CSS Boilerplate
 ```
 $ npm install
 ```
+- install dependencies for the client
+```
+$ cd client && npm install
+```
 - Copy & rename .env.example file to .env
 - Set env variables
-
-```env
-NODE_ENV=development
-PORT=5000
-MONGO_URI=
-JWT_SECRET=
+- create file upload directory
+```
+$ mkdir -p server/public/uploads
 ```
 - Seed the DB using
 ```
