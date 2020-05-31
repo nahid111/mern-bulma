@@ -1,6 +1,7 @@
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/asyncHandler');
 const crypto = require('crypto');
+const jwt = require("jsonwebtoken");
 const sendEmail = require('../utils/sendEmail');
 const path = require('path');
 const fs = require('fs');
@@ -35,14 +36,61 @@ const sendTokenResponse = (user, statusCode, res) => {
 // @access    Public
 exports.register = asyncHandler(async (req, res, next) => {
   const { name, email, password, role } = req.body;
+
   // If user exists
   let user = await User.findOne({ email: email });
   if (user) {
       return next(new ErrorResponse(400, "Email already exists"));
   }
+
   // Create user
   user = await User.create({ name, email, password, role });
-  sendTokenResponse(user, 200, res);
+
+  // Get reset token
+  const emailToken = user.getSignedJwtToken(process.env.JWT_EXPIRE_EMAIL);
+
+  const verifyUrl = `http://localhost:3000/verify-email/${emailToken}`;
+  const message = `
+  <div style="text-align: center; padding: 20px; line-height: 2; font-size: 1.2rem">
+    You have Registered successfully. <br />
+    Visit the following link to verify your email and continue to login <br /><br />
+    <a href="${verifyUrl}"
+      style="background-color: #4CAF50; border: none; color: white; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 1rem; font-weight: bold">
+      VERIFY EMAIL
+    </a>
+    <p style="color: red;">
+      This link will expire after the next ${process.env.JWT_EXPIRE_EMAIL} hours
+    </p>
+  </div>
+  `;
+
+  // send email 
+  try {
+    await sendEmail({ email: user.email, subject: "mern-app Verify Email", message });
+    res.status(200).json({ success: true, data: "Verification Email sent" });
+  }
+  catch (err) {
+    console.log(err);
+    return next(new ErrorResponse(500, "Sending Verification Email Failed"));
+  }
+});
+
+
+// @desc      Verify Email
+// @route     POST /api/v1/auth/register
+// @access    Public
+exports.verifyEmail = asyncHandler(async (req, res, next) => {
+  const token = req.params.emailtoken;
+
+  // Verify token
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    // update user
+    user = await User.findByIdAndUpdate(decoded.id, { emailVerified: true });
+    res.status(200).json({ success: true, data: "Email Verified. Login to continue" });
+  } catch (err) {
+    return next(new ErrorResponse(401, "Token expired or invalid"));
+  }
 });
 
 
@@ -64,6 +112,10 @@ exports.login = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse(401, "Invalid credentials"));
   }
 
+  if (!user.emailVerified) {
+    return next(new ErrorResponse(401, "Please confirm your email first"));
+  }
+
   // Check if password matches
   const isMatch = await user.matchPassword(password);
 
@@ -75,7 +127,7 @@ exports.login = asyncHandler(async (req, res, next) => {
 });
 
 
-// @desc      Log user out / clear cookie
+// @desc      Logout / clear cookie
 // @route     GET /api/v1/auth/logout
 // @access    Public
 exports.logout = asyncHandler(async (req, res, next) => {
@@ -228,7 +280,7 @@ exports.updateDetails = asyncHandler(async (req, res, next) => {
     }
   }
 
-  // update bootcamp with filename
+  // update user
   user = await User.findByIdAndUpdate(req.user._id, fieldsToUpdate);
   res.status(200).json({ success: true, data: user });
 });

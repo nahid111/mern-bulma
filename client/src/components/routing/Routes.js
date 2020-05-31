@@ -11,6 +11,7 @@ import Alert from '../Alert';
 import Profile from '../Profile.jsx';
 import ForgotPassword from '../auth/ForgotPassword.jsx';
 import ResetPassword from '../auth/ResetPassword.jsx';
+import VerifyEmail from '../auth/VerifyEmail.jsx';
 
 
 const Routes = props => {
@@ -20,6 +21,7 @@ const Routes = props => {
       <Switch>
         <Route exact path="/" component={Home} />
         <Route exact path="/register" component={Register} />
+        <Route exact path="/verify-email/:token" component={VerifyEmail} />
         <Route exact path="/login" component={Login} />
         <Route exact path="/forgot-password" component={ForgotPassword} />
         <Route exact path="/reset-password/:token" component={ResetPassword} />

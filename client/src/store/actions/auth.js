@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { setAlert } from './alert';
 import { 
-  LOGIN_SUCCESS, LOGIN_FAIL, REGISTER_SUCCESS, REGISTER_FAIL, USER_LOADED, AUTH_ERROR, LOGOUT
+  LOGIN_SUCCESS, LOGIN_FAIL, REGISTER_SUCCESS, REGISTER_FAIL, USER_LOADED, AUTH_ERROR, LOGOUT, VERIFY_EMAIL
 } from './types';
 
 
@@ -58,13 +58,42 @@ export const register = (data) => async (dispatch) => {
   });
 
   try {
-    const res = await axios.post("/api/v1/auth/register", body, config);
-    dispatch({ type: REGISTER_SUCCESS, payload: res.data });
+    await axios.post("/api/v1/auth/register", body, config);
+    dispatch(
+      setAlert(
+        `An Email will be sent to your email address containing a link to verify it. 
+        This link will expire after the next 24 hours. 
+        Please Visit your email and follow the link for the next steps.`,
+        "success",
+        60000
+      )
+    );
+    dispatch({ type: REGISTER_SUCCESS });
     dispatch(loadUser());
 
   } catch (err) {
     dispatch(setAlert(err.response.data.error, "danger"));
     dispatch({ type: REGISTER_FAIL });
+  }
+};
+
+
+//======================================================================
+//                         Verify Email
+//======================================================================
+export const verifyEmail = (token) => async (dispatch) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  
+  try {
+    await axios.get("/api/v1/auth/verifyemail/"+token, config);
+    dispatch({ type: VERIFY_EMAIL });
+
+  } catch (err) {
+    dispatch(setAlert(err.response.data.error, "danger"));
   }
 };
 
@@ -146,7 +175,7 @@ export const resetPassword = (token, password) => async (dispatch) => {
 
   try {
     await axios.put("/api/v1/auth/resetpassword/"+token, body, config);
-    dispatch(setAlert("Password Reset Successful", "success", 60000));
+    dispatch(setAlert("Password Reset Successful. Login to continue", "success", 60000));
 
   } catch (err) {
     dispatch(setAlert(err.response.data.error, "danger"));

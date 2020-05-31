@@ -39,7 +39,11 @@ const Profile = ({ auth, loadUser, updateUser }) => {
                 <figure className="image is-128x128">
                   <img
                     className="is-rounded"
-                    src={`http://localhost:5000/uploads/${avatar}`}
+                    src={
+                      avatar
+                        ? `http://localhost:5000/uploads/${avatar}`
+                        : "https://via.placeholder.com/128x128"
+                    }
                     alt="avatar"
                   />
                 </figure>

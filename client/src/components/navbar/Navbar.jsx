@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { logout } from "../../store/actions/auth";
@@ -13,16 +13,18 @@ const NavigationBar = ({ auth: {user, isAuthenticated, loading}, logout }) => {
     <div className="navbar-end">
       <div className="navbar-item has-dropdown is-hoverable">
         <a className="navbar-link" href="#!">
-          {user ? (
-            <Fragment>
-              <figure className="image is-32x32">
-                <img className="is-rounded" src={`http://localhost:5000/uploads/${user.avatar && user.avatar}`} alt="avatar" />
-              </figure>
-              <span>{user.name}</span>
-            </Fragment>
-          ) : (
-            "User"
-          )}
+          <figure className="image is-32x32">
+            <img
+              className="is-rounded"
+              src={
+                user && user.avatar
+                  ? `http://localhost:5000/uploads/${user.avatar}`
+                  : "https://via.placeholder.com/32x32"
+              }
+              alt="avatar"
+            />
+          </figure>
+          <span>{user ? user.name : "username"}</span>
         </a>
 
         <div className="navbar-dropdown">

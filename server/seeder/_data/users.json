@@ -4,6 +4,7 @@
     "role": "admin",
     "name": "Admin",
     "email": "admin@gmail.com",
+    "emailVerified": "true",
     "password": "123456"
   },
   {
@@ -11,6 +12,7 @@
     "role": "user",
     "name": "John Doe",
     "email": "jdoe@gmail.com",
+    "emailVerified": "true",
     "password": "123456"
   }
 ]
