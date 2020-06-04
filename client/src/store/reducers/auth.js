@@ -1,6 +1,16 @@
 import {
-    LOGIN_SUCCESS, LOGIN_FAIL, REGISTER_SUCCESS, REGISTER_FAIL, USER_LOADED, AUTH_ERROR, LOGOUT, VERIFY_EMAIL
-} from '../actions/types';
+  LOGIN_SUCCESS,
+  LOGIN_FAIL,
+  REGISTER_SUCCESS,
+  REGISTER_FAIL,
+  USER_LOADED,
+  AUTH_ERROR,
+  LOGOUT,
+  VERIFY_EMAIL,
+  LOADING_START,
+  LOADING_END,
+} from "../actions/types";
+
 
 const initialState = {
     token: localStorage.getItem('token'),
@@ -9,6 +19,7 @@ const initialState = {
     loading: true,
     user: null
 }
+
 
 export default (state = initialState, action) => {
     switch (action.type) {
@@ -36,6 +47,16 @@ export default (state = initialState, action) => {
         return {
           ...state,
           isVerified: true,
+        };
+      case LOADING_START:
+        return {
+          ...state,
+          loading: true,
+        };
+      case LOADING_END:
+        return {
+          ...state,
+          loading: false,
         };
       case LOGOUT:
       case AUTH_ERROR:

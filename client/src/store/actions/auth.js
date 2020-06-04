@@ -1,8 +1,17 @@
 import axios from 'axios';
 import { setAlert } from './alert';
-import { 
-  LOGIN_SUCCESS, LOGIN_FAIL, REGISTER_SUCCESS, REGISTER_FAIL, USER_LOADED, AUTH_ERROR, LOGOUT, VERIFY_EMAIL
-} from './types';
+import {
+  LOGIN_SUCCESS,
+  LOGIN_FAIL,
+  REGISTER_SUCCESS,
+  REGISTER_FAIL,
+  USER_LOADED,
+  AUTH_ERROR,
+  LOGOUT,
+  VERIFY_EMAIL,
+  LOADING_START,
+  LOADING_END,
+} from "./types";
 
 
 //======================================================================
@@ -147,7 +156,10 @@ export const forgotPassword = (email) => async (dispatch) => {
   const body = JSON.stringify({email});
 
   try {
+    dispatch({ type: LOADING_START });
+
     await axios.post("/api/v1/auth/forgotpassword", body, config);
+
     dispatch(
       setAlert(
         `An Email will be sent to this email address containing a link to reset the password. Please Visit your email and follow the link for the next steps.`,
@@ -155,6 +167,8 @@ export const forgotPassword = (email) => async (dispatch) => {
         60000
       )
     );
+
+    dispatch({ type: LOADING_END });
 
   } catch (err) {
     dispatch(setAlert(err.response.data.error, "danger"));
